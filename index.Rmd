@@ -82,24 +82,20 @@ summary.stat.table <- plot_ly(
   ))
 
 # create a new column to track changes from month to month
-for (row in 2:nrow(crime.df)){
-  crime.df$violent.change[row + 1] <- (crime.df$Total.Violent.Crime[row + 1]
-                             - crime.df$Total.Violent.Crime[row])
-}
-
-for (row in 2:nrow(crime.df)){
-  crime.df$burglary.change[row + 1] <- (crime.df$Total.Burglary[row  + 1]
-                                   - crime.df$Total.Burglary[row])
-}
-
-for (row in 2:nrow(crime.df)){
-  crime.df$thefts.change[row + 1] <- (crime.df$Total.Thefts[row + 1]
-                                    - crime.df$Total.Thefts[row])
-}
-
-for (row in 2:nrow(crime.df)){
-  crime.df$vehicle.change[row + 1] <- (crime.df$Motor.Vehicle.Theft[row + 1]
-                                  - crime.df$Motor.Vehicle.Theft[row])
+for (row in 1:nrow(crime.df)){
+  if (is.na(crime.df$Total.Violent.Crime[row + 1]
+            - crime.df$Total.Violent.Crime[row])) {
+  } 
+  else {
+    crime.df$violent.change[row + 1] <- (crime.df$Total.Violent.Crime[row + 1]
+                                         - crime.df$Total.Violent.Crime[row])
+    crime.df$burglary.change[row + 1] <- (crime.df$Total.Burglary[row  + 1]
+                                          - crime.df$Total.Burglary[row])
+    crime.df$thefts.change[row + 1] <- (crime.df$Total.Thefts[row + 1]
+                                        - crime.df$Total.Thefts[row])
+    crime.df$vehicle.change[row + 1] <- (crime.df$Motor.Vehicle.Theft[row + 1]
+                                         - crime.df$Motor.Vehicle.Theft[row])
+  }
 }
 
 # create a dataframe containing only the monthly changes
