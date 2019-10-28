@@ -2,7 +2,7 @@ library(plotly)
 library(corrplot)
 
 # read the csv file into R
-dat <- read.csv(file='C:/Users/TomBrody/Desktop/School/555/Final/SD-crime.csv', sep = ',')
+dat <- read.csv(file='F:/Code projects/BU/555 - analysis and vis/Final/SD-crime.csv', sep = ',')
 
 # Remove columns 2-6, 8-9, 11-12, 15, 16 which are not being used during this analysis
 crime.df <- dat[, c(1,7,10,13,14)]
@@ -31,27 +31,23 @@ summary(crime.df$Motor.Vehicle.Theft)
 
 # create a new column to track changes from month to month
 for (row in 1:nrow(crime.df)){
-  crime.df$violent.change[row + 1] <- (crime.df$Total.Violent.Crime[row + 1]
-                             - crime.df$Total.Violent.Crime[row])
-}
-
-for (row in 1:nrow(crime.df)){
-  crime.df$burglary.change[row + 1] <- (crime.df$Total.Burglary[row  + 1]
-                                   - crime.df$Total.Burglary[row])
-}
-
-for (row in 1:nrow(crime.df)){
-  crime.df$thefts.change[row + 1] <- (crime.df$Total.Thefts[row + 1]
-                                    - crime.df$Total.Thefts[row])
-}
-
-for (row in 1:nrow(crime.df)){
-  crime.df$vehicle.change[row + 1] <- (crime.df$Motor.Vehicle.Theft[row + 1]
-                                  - crime.df$Motor.Vehicle.Theft[row])
+  if (is.na(crime.df$Total.Violent.Crime[row + 1]
+            - crime.df$Total.Violent.Crime[row])) {
+  } 
+  else {
+    crime.df$violent.change[row + 1] <- (crime.df$Total.Violent.Crime[row + 1]
+                                         - crime.df$Total.Violent.Crime[row])
+    crime.df$burglary.change[row + 1] <- (crime.df$Total.Burglary[row  + 1]
+                                          - crime.df$Total.Burglary[row])
+    crime.df$thefts.change[row + 1] <- (crime.df$Total.Thefts[row + 1]
+                                        - crime.df$Total.Thefts[row])
+    crime.df$vehicle.change[row + 1] <- (crime.df$Motor.Vehicle.Theft[row + 1]
+                                         - crime.df$Motor.Vehicle.Theft[row])
+  }
 }
 
 # create a dataframe containing only the monthly changes
-crime.change <- crime.df[, c(6:9)]
+crime.change <- crime.df[, c(7:10)]
 
 # summary of those changes
 summary(crime.change)
