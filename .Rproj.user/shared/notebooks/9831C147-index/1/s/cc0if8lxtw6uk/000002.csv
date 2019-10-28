@@ -1,0 +1,4 @@
+"0","# create a new column containing just the year"
+"0","crime.df$year <- substr(crime.df$month, 5, 6)"
+"0",""
+"0",""
