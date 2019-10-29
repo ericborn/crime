@@ -101,11 +101,134 @@ for (row in 1:nrow(crime.df)){
 # create a dataframe containing only the monthly changes
 crime.change <- crime.df[, c(7:10)]
 
+# summary stats for data
+change.stats <- data.frame('Measure' = c('Violent Crime', 'Burglary', 'Thefts', 
+                                         'Vehicle Theft'),
+                           'Min' = c(summary(crime.change$violent.change)[[1]],
+                                     summary(crime.change$burglary.change)[[1]],
+                                     summary(crime.change$thefts.change)[[1]],
+                                     summary(crime.change$vehicle.change)[[1]]),
+                           
+                           'q1' = c(summary(crime.change$violent.change)[[2]],
+                                    summary(crime.change$burglary.change)[[2]],
+                                    summary(crime.change$thefts.change)[[2]],
+                                    summary(crime.change$vehicle.change)[[2]]),
+                           
+                           'Median' = c(summary(crime.change$violent.change)[[3]],
+                                        summary(crime.change$burglary.change)[[3]],
+                                        summary(crime.change$thefts.change)[[3]],
+                                        summary(crime.change$vehicle.change)[[3]]),
+                           
+                           'Mean' = c(summary(crime.change$violent.change)[[4]],
+                                      summary(crime.change$burglary.change)[[4]],
+                                      summary(crime.change$thefts.change)[[4]],
+                                      summary(crime.change$vehicle.change)[[4]]),
+                           
+                           'q3' = c(summary(crime.change$violent.change)[[5]],
+                                    summary(crime.change$burglary.change)[[5]],
+                                    summary(crime.change$thefts.change)[[5]],
+                                    summary(crime.change$vehicle.change)[[5]]),
+                           
+                           'Max' = c(summary(crime.change$violent.change)[[6]],
+                                     summary(crime.change$burglary.change)[[6]],
+                                     summary(crime.change$thefts.change)[[6]],
+                                     summary(crime.change$vehicle.change)[[6]]))
+
+# reset factors to order by Measure column
+change.stats$Measure <- factor(change.stats$Measure, 
+                             levels = c(as.character(full.stats$Measure)))
+
+# Convert factors to character
+change.stats$Measure <- as.character(change.stats$Measure)
+
+# create change summary table
+summary.change.table <- plot_ly(
+  type = 'table',
+  height = 180,
+  #width = 700,
+  columnwidth = c(25, 15, 15, 15, 15),
+  header = list(
+    values = c('Measure', 'Min', '1st Q', 'Median', 'Mean', '3rd Q', 'Max'),
+    line = list(width = 1, color = 'black'),
+    fill = list(color = c('#1f77b4', '#1f77b4')),
+    font = list(famile = 'Arial', size = 14, color = 'white')
+  ),
+  cells = list(
+    values = rbind(change.stats$Measure, change.stats$Min, change.stats$q1, change.stats$Median, 
+                   round(change.stats$Mean,1), change.stats$q3, change.stats$Max),
+    align = c('center'),
+    line = list(width = 1, color = 'black')
+  ))
+
+# create sums by year for each of the main categories
+crime.year <- setNames(aggregate(list(crime.df$Total.Violent.Crime, crime.df$Total.Burglary, 
+                                      crime.df$Total.Thefts, crime.df$Motor.Vehicle.Theft), 
+                                 by=crime.df['year'], sum), c('year','violent', 'burglary', 'theft', 'vehicle'))
+
+# create new columns to track yearly changes
+crime.year$violent.change = 0
+crime.year$burglary.change = 0
+crime.year$thefts.change = 0
+crime.year$vehicle.change = 0
+
+# create new columns to track yearly percent changes
+crime.year$violent.pct = 0
+crime.year$burglary.pct = 0
+crime.year$thefts.pct = 0
+crime.year$vehicle.pct = 0
+
+# create a new column to track changes from month to month
+# calculate the amount change between years
+for (row in 1:nrow(crime.year)){
+  if (is.na(crime.year$violent[row + 1]
+            - crime.year$violent[row])) {
+  }   
+  else {
+    crime.year$violent.pct[row + 1] <- (crime.year$violent[row + 1]
+                                        / crime.year$violent[row]) * 100
+    crime.year$violent.change[row + 1] <- (crime.year$violent[row + 1]
+                                           - crime.year$violent[row])
+    
+    crime.year$burglary.pct[row + 1] <- (crime.year$burglary[row + 1]
+                                         / crime.year$burglary[row]) * 100
+    crime.year$burglary.change[row + 1] <- (crime.year$burglary[row + 1]
+                                            - crime.year$burglary[row])
+    
+    crime.year$thefts.pct[row + 1] <- (crime.year$theft[row + 1]
+                                       / crime.year$theft[row])* 100
+    crime.year$thefts.change[row + 1] <- (crime.year$theft[row + 1]
+                                          - crime.year$theft[row])
+    crime.year$vehicle.pct[row + 1] <- (crime.year$vehicle[row + 1]
+                                        / crime.year$vehicle[row]) * 100
+    crime.year$vehicle.change[row + 1] <- (crime.year$vehicle[row + 1]
+                                           - crime.year$vehicle[row])
+  }
+}
+
+# Percentage change table from 2008 to 2018
+percent.change.table <- plot_ly(
+  type = 'table',
+  height = 150,
+  width = 600,
+  header = list(
+    values = c('Violent Crime', 'Burglary', 'Theft', 'Vehicle Theft'),
+    line = list(width = 1, color = 'black'),
+    fill = list(color = c('#1f77b4', '#1f77b4')),
+    font = list(famile = 'Arial', size = 14, color = 'white')
+  ),
+  cells = list(
+    values = rbind(round((((tail(crime.year$violent, 1) / crime.year$violent[1]) - 1)*100), 2),
+                   round((((tail(crime.year$burglary, 1) / crime.year$burglary[1]) - 1)*100), 2),
+                   round((((tail(crime.year$theft, 1) / crime.year$theft[1]) - 1)*100), 2),
+                   round((((tail(crime.year$vehicle, 1) / crime.year$vehicle[1]) - 1)*100), 2)),
+    align = c('center'),
+    line = list(width = 1, color = 'black')
+  ))
 ```
 
 ## Overview
 
-Utilizing R, I performed a study on the overall crime levels to gain an understanding if there were any correlations between the types of crimes being committed.
+Utilizing R, I performed a study on the overall crime levels to gain an understanding if there were any correlations between the total number of violent crimes, burglaries, thefts and vehicle thefts and to compare them over time to see if they have remained the same.
 
 The data being used was from the San Diego Automated Regional Justice Information System (ARJIS) and contains the following columns: Murder, Rape, Armed Robbery, Strong Arm Robbery, Aggravated Assault, Total Violent Crime, Residential Burglary, Non-Residential Burglary, Total Burglary, Theft >= $400, Theft < $400, Total Thefts, Motor Vehicle Theft, Total Property Crime and Crime Index.
 
@@ -128,19 +251,19 @@ Looking at the five number summary showing the total occurrences per category ac
 summary.stat.table
 ```
 
+### Change over time
+
 To study the change over time, I first calculated the change per category from one month to the next and then ran a summary on that data. From the summary you can see that the minimum and maximum, which is the measurement of the decrease or increase in total occurences from one month to the next, were close to the same for violent crime, and theft, but the largest decrease for burglary was 79 greater than the maximum increase, 303 compared to 224 and it was the opposite for vehicle theft, 423 as the highest increase versus 382 as the lowest decrease.
 
 ```{r echo=FALSE}
 # Plot summary table
-summary.stat.table
+summary.change.table
 ```
 
-
-## Research Questions
-My two research questions was to evaluate the correlation and overall trends between the total number of violent crimes, burglaries, thefts and vehicle thefts over time to see if they have remained the same.
+### Percent change from 2008 to 2018
+When observing the difference in total events in each category from 2008 to 2018, we can see that vehicle theft fell the greatest at 52%, followed by burglary at 51.4%, theft at 18.64 and violent crime at 11.52%
 
 ```{r echo=FALSE}
-
-
-
+# Percentage change table from 2008 to 2018
+percent.change.table
 ```

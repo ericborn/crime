@@ -1,0 +1,4 @@
+# put ignored files here
+.Rproj.user
+.Rhistory
+.RData
