@@ -184,28 +184,26 @@ for (row in 1:nrow(crime.year)){
             - crime.year$violent[row])) {
   }   
   else {
-    crime.year$violent.pct[row + 1] <- (crime.year$violent[row + 1]
-                                        / crime.year$violent[row]) * 100
+    crime.year$violent.pct[row + 1] <- ((crime.year$violent[row + 1]
+                                        / crime.year$violent[row]) * 100) - 100
     crime.year$violent.change[row + 1] <- (crime.year$violent[row + 1]
                                            - crime.year$violent[row])
     
-    crime.year$burglary.pct[row + 1] <- (crime.year$burglary[row + 1]
-                                         / crime.year$burglary[row]) * 100
+    crime.year$burglary.pct[row + 1] <- ((crime.year$burglary[row + 1]
+                                         / crime.year$burglary[row]) * 100) - 100
     crime.year$burglary.change[row + 1] <- (crime.year$burglary[row + 1]
                                             - crime.year$burglary[row])
     
-    crime.year$thefts.pct[row + 1] <- (crime.year$theft[row + 1]
-                                       / crime.year$theft[row])* 100
+    crime.year$thefts.pct[row + 1] <- ((crime.year$theft[row + 1]
+                                       / crime.year$theft[row])* 100) - 100
     crime.year$thefts.change[row + 1] <- (crime.year$theft[row + 1]
                                           - crime.year$theft[row])
-    crime.year$vehicle.pct[row + 1] <- (crime.year$vehicle[row + 1]
-                                        / crime.year$vehicle[row]) * 100
+    crime.year$vehicle.pct[row + 1] <- ((crime.year$vehicle[row + 1]
+                                        / crime.year$vehicle[row]) * 100) - 100
     crime.year$vehicle.change[row + 1] <- (crime.year$vehicle[row + 1]
                                            - crime.year$vehicle[row])
   }
 }
-
-
 
 # Percentage change table from 2008 to 2018
 percent.change.table <- plot_ly(
@@ -249,6 +247,67 @@ yearly.totals.table <- plot_ly(
     align = c('center'),
     line = list(width = 1, color = 'black')
   ))
+
+# summary of change by year
+change.by.year <- data.frame(rbind(summary(crime.year[-1,6]), summary(crime.year[-1,7]),
+                                   summary(crime.year[-1,8]), summary(crime.year[-1,9])))
+
+# Create column with measure names
+change.by.year$measure <- c('Violent Crime', 'Burglary', 'Thefts', 'Vehicle Theft')
+
+# summary of change by year
+change.by.year.pct <- data.frame(rbind(summary(crime.year[-1,10]), summary(crime.year[-1,11]),
+                                       summary(crime.year[-1,12]), summary(crime.year[-1,13])))
+
+# Create column with measure names
+change.by.year.pct$measure <- c('Violent Crime %', 'Burglary %', 'Thefts %', 'Vehicle Theft %')
+
+# create yearly change summary table
+yearly.change.table <- plot_ly(
+  type = 'table',
+  height = 180,
+  #width = 700,
+  columnwidth = c(25, 15, 15, 15, 15, 15, 15),
+  header = list(
+    values = c('Measure', 'Min', '1st Q', 'Median', 'Mean', '3rd Q', 'Max'),
+    line = list(width = 1, color = 'black'),
+    fill = list(color = c('#1f77b4', '#1f77b4')),
+    font = list(famile = 'Arial', size = 14, color = 'white')
+  ),
+  cells = list(
+    values = rbind(change.by.year$measure, round(change.by.year$Min,2), round(change.by.year$X1st.Qu.,2), 
+                   round(change.by.year$Median,2),round(change.by.year$Mean,2), 
+                   round(change.by.year$X3rd.Qu.,2), round(change.by.year$Max,2)),
+    align = c('center'),
+    line = list(width = 1, color = 'black')
+  ))
+
+# Output summary of changes by year
+yearly.change.table
+
+
+# create yearly change summary table
+yearly.change.pct.table <- plot_ly(
+  type = 'table',
+  height = 180,
+  #width = 700,
+  columnwidth = c(25, 15, 15, 15, 15, 15, 15),
+  header = list(
+    values = c('Measure', 'Min', '1st Q', 'Median', 'Mean', '3rd Q', 'Max'),
+    line = list(width = 1, color = 'black'),
+    fill = list(color = c('#1f77b4', '#1f77b4')),
+    font = list(famile = 'Arial', size = 14, color = 'white')
+  ),
+  cells = list(
+    values = rbind(change.by.year.pct$measure, round(change.by.year.pct$Min,2), round(change.by.year.pct$X1st.Qu.,2), 
+                   round(change.by.year.pct$Median,2),round(change.by.year.pct$Mean,2), 
+                   round(change.by.year.pct$X3rd.Qu.,2), round(change.by.year.pct$Max,2)),
+    align = c('center'),
+    line = list(width = 1, color = 'black')
+  ))
+
+# Output summary of changes by year
+yearly.change.pct.table
 ```
 
 ## Overview
@@ -303,3 +362,11 @@ When observing the difference in total events in each category from 2008 to 2018
 percent.change.table
 ```
 
+### Summary of changes by year
+Studying the changes by year shows that the mean value of each category is on the decline as we previously saw. Vehicle theft and theft had the most significant reduction from 2008 to 2018, which is reconfirmed with their minimum values being close to four times less for burglary, -3000 to 771 and five times as much for vehicle theft -5962 to 1096.
+
+```{r echo=FALSE}
+# Output summary of changes by year
+yearly.change.table
+yearly.change.pct.table
+```
