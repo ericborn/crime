@@ -299,15 +299,16 @@ yearly.change.pct.table <- plot_ly(
     font = list(famile = 'Arial', size = 14, color = 'white')
   ),
   cells = list(
-    values = rbind(change.by.year.pct$measure, round(change.by.year.pct$Min,2), round(change.by.year.pct$X1st.Qu.,2), 
-                   round(change.by.year.pct$Median,2),round(change.by.year.pct$Mean,2), 
-                   round(change.by.year.pct$X3rd.Qu.,2), round(change.by.year.pct$Max,2)),
+    values = rbind(change.by.year.pct$measure, 
+                   paste(round(change.by.year.pct$Min,2),'%', sep=''),
+                   paste(round(change.by.year.pct$X1st.Qu.,2),'%', sep=''),
+                   paste(round(change.by.year.pct$Median,2),'%', sep=''),
+                   paste(round(change.by.year.pct$Mean,2),'%', sep=''),
+                   paste(round(change.by.year.pct$X3rd.Qu.,2),'%', sep=''),
+                   paste(round(change.by.year.pct$Max,2),'%', sep='')),
     align = c('center'),
     line = list(width = 1, color = 'black')
   ))
-
-# Output summary of changes by year
-yearly.change.pct.table
 ```
 
 ## Overview
@@ -363,10 +364,17 @@ percent.change.table
 ```
 
 ### Summary of changes by year
-Studying the changes by year shows that the mean value of each category is on the decline as we previously saw. Vehicle theft and theft had the most significant reduction from 2008 to 2018, which is reconfirmed with their minimum values being close to four times less for burglary, -3000 to 771 and five times as much for vehicle theft -5962 to 1096.
+Studying the changes by year shows that the mean value of each category is on the decline as we previously saw. Vehicle theft and burglary had the most significant average reduction 1025 and 864 yearly instances respectively. 
 
 ```{r echo=FALSE}
 # Output summary of changes by year
 yearly.change.table
+```
+
+### Percent changes by year
+Since the raw numbers can be difficult to compare, lets look at the data as percentages. Again we see that Vehicle theft and burglary had the greatest average decline at 6.31% and 6.65%. Vehicle theft had the widest spread at just over 40%, dropping over 30% one year, but also climbing 11% on a different year. Violent crime had the least movement with its min/max falling 16% apart and its mean change at -1.08%
+
+```{r echo=FALSE}
+# Output summary of changes by year
 yearly.change.pct.table
 ```
