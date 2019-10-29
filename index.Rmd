@@ -205,11 +205,13 @@ for (row in 1:nrow(crime.year)){
   }
 }
 
+
+
 # Percentage change table from 2008 to 2018
 percent.change.table <- plot_ly(
   type = 'table',
-  height = 150,
-  width = 600,
+  height = 115,
+  columnwidth = c(10, 10, 10, 10),
   header = list(
     values = c('Violent Crime', 'Burglary', 'Theft', 'Vehicle Theft'),
     line = list(width = 1, color = 'black'),
@@ -217,10 +219,33 @@ percent.change.table <- plot_ly(
     font = list(famile = 'Arial', size = 14, color = 'white')
   ),
   cells = list(
-    values = rbind(round((((tail(crime.year$violent, 1) / crime.year$violent[1]) - 1)*100), 2),
-                   round((((tail(crime.year$burglary, 1) / crime.year$burglary[1]) - 1)*100), 2),
-                   round((((tail(crime.year$theft, 1) / crime.year$theft[1]) - 1)*100), 2),
-                   round((((tail(crime.year$vehicle, 1) / crime.year$vehicle[1]) - 1)*100), 2)),
+    values = rbind(paste(round((((tail(crime.year$violent, 1) / crime.year$violent[1]) - 1)*100), 2),'%'),
+                   paste(round((((tail(crime.year$burglary, 1) / crime.year$burglary[1]) - 1)*100), 2),'%'),
+                   paste(round((((tail(crime.year$theft, 1) / crime.year$theft[1]) - 1)*100), 2),'%'),
+                   paste(round((((tail(crime.year$vehicle, 1) / crime.year$vehicle[1]) - 1)*100), 2),'%')),
+    align = c('center'),
+    line = list(width = 1, color = 'black')
+  ))
+
+# prepends 20 to each year so its the full year, 2008 instead of 08
+for(row in 1:nrow(crime.year)){
+  crime.year[[1]][row] <- paste('20',crime.year[[1]][row], sep='')
+}
+
+# yearly totals
+yearly.totals.table <- plot_ly(
+  type = 'table',
+  height = 320,
+  width = 700,
+  header = list(
+    values = c('Year','Violent Crime', 'Burglary', 'Theft', 'Vehicle Theft'),
+    line = list(width = 1, color = 'black'),
+    fill = list(color = c('#1f77b4', '#1f77b4')),
+    font = list(famile = 'Arial', size = 14, color = 'white')
+  ),
+  cells = list(
+    values = rbind(crime.year$year, crime.year$violent, crime.year$burglary, 
+                   crime.year$theft, crime.year$vehicle),
     align = c('center'),
     line = list(width = 1, color = 'black')
   ))
@@ -242,16 +267,16 @@ There are 132 total observations, one per month for 11 years.
 
 The original data can be found here: http://crimestats.arjis.org/default.aspx
 
-### Summary
+### Summary by Category
 
-Looking at the five number summary showing the total occurrences per category across the entire dataset. We can see that on average, theft occurs three to four times more often than the any of the other categories of crime and that the other three categories happen at close to the same frequency as each other.
+Here the five number summary is showing the occurrences per month by category. We can see that on average, theft occurs three to four times more often than the any of the other categories of crime and that the other three categories happen at close to the same frequency as each other.
 
 ```{r echo=FALSE}
 # Plot summary table
 summary.stat.table
 ```
 
-### Change over time
+### Summary of change by month
 
 To study the change over time, I first calculated the change per category from one month to the next and then ran a summary on that data. From the summary you can see that the minimum and maximum, which is the measurement of the decrease or increase in total occurences from one month to the next, were close to the same for violent crime, and theft, but the largest decrease for burglary was 79 greater than the maximum increase, 303 compared to 224 and it was the opposite for vehicle theft, 423 as the highest increase versus 382 as the lowest decrease.
 
@@ -260,10 +285,21 @@ To study the change over time, I first calculated the change per category from o
 summary.change.table
 ```
 
+### Yearly Totals
+
+Total occurances by category from 2008 to 2018. There are little upticks here and there, but overall all of the categories had a decrease from 2008 to 2018. Lets look a little closer at the exact percent of change.
+
+```{r echo=FALSE}
+# yearly totals
+yearly.totals.table
+```
+
 ### Percent change from 2008 to 2018
+
 When observing the difference in total events in each category from 2008 to 2018, we can see that vehicle theft fell the greatest at 52%, followed by burglary at 51.4%, theft at 18.64 and violent crime at 11.52%
 
 ```{r echo=FALSE}
 # Percentage change table from 2008 to 2018
 percent.change.table
 ```
+
