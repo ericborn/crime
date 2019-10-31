@@ -283,10 +283,6 @@ yearly.change.table <- plot_ly(
     line = list(width = 1, color = 'black')
   ))
 
-# Output summary of changes by year
-yearly.change.table
-
-
 # create yearly change summary table
 yearly.change.pct.table <- plot_ly(
   type = 'table',
@@ -316,13 +312,11 @@ cor.matrix <- cor(crime.df[, c(2:5)])
 
 # Highest correlation is between motor vehicle theft and burglary
 # generate a scatter plot to observe the correlation
-
 scatter.corr <- ggplot(data = crime.df, aes(x = Motor.Vehicle.Theft, y = Total.Burglary)) + 
    geom_point(color='blue') +
    geom_smooth(color='red', method = "lm", se = FALSE) +
    ggtitle('Correlation between Motor Vehicle Theft and Total Burglaries') +
    theme(plot.title = element_text(hjust = 0.5))
-
 ```
 
 ### Overview
