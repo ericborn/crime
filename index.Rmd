@@ -309,6 +309,9 @@ yearly.change.pct.table <- plot_ly(
     align = c('center'),
     line = list(width = 1, color = 'black')
   ))
+
+# setup correlations beteen each category
+cor.matrix <- cor(crime.df[, c(2:5)])
 ```
 
 ## Overview
@@ -377,4 +380,13 @@ Since the raw numbers can be difficult to compare, lets look at the data as perc
 ```{r echo=FALSE}
 # Output summary of changes by year
 yearly.change.pct.table
+```
+
+### Category correlation
+
+Looking at the correlation between each of these categories with a correlation matrix, we can see that each of them is positively correlated. Violent crime has the lowest overall correlation with all of the other categories, while motor vehicle theft had the highest. The two with the highest correlation was vehicle theft and burglary at 0.77.
+
+```{r echo=FALSE}
+# Plot the correlations
+corrplot(cor.matrix, method = 'number', type = 'lower', order = 'hclust')
 ```
