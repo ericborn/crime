@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
 	warning = FALSE
 )
 library(plotly)
+library(ggplot2)
 library(corrplot)
 
 # read the csv file into R
@@ -312,9 +313,19 @@ yearly.change.pct.table <- plot_ly(
 
 # setup correlations beteen each category
 cor.matrix <- cor(crime.df[, c(2:5)])
+
+# Highest correlation is between motor vehicle theft and burglary
+# generate a scatter plot to observe the correlation
+
+scatter.corr <- ggplot(data = crime.df, aes(x = Motor.Vehicle.Theft, y = Total.Burglary)) + 
+   geom_point(color='blue') +
+   geom_smooth(color='red', method = "lm", se = FALSE) +
+   ggtitle('Correlation between Motor Vehicle Theft and Total Burglaries') +
+   theme(plot.title = element_text(hjust = 0.5))
+
 ```
 
-## Overview
+### Overview
 
 Utilizing R, I performed a study on the overall crime levels to gain an understanding if there were any correlations between the total number of violent crimes, burglaries, thefts and vehicle thefts and to compare them over time to see if they have remained the same.
 
@@ -339,7 +350,7 @@ Here the five number summary is showing the occurrences per month by category. W
 summary.stat.table
 ```
 
-### Summary of change by month
+### Summary of Change by Month
 
 To study the change over time, I first calculated the change per category from one month to the next and then ran a summary on that data. From the summary you can see that the minimum and maximum, which is the measurement of the decrease or increase in total occurences from one month to the next, were close to the same for violent crime, and theft, but the largest decrease for burglary was 79 greater than the maximum increase, 303 compared to 224 and it was the opposite for vehicle theft, 423 as the highest increase versus 382 as the lowest decrease.
 
@@ -357,7 +368,7 @@ Total occurances by category from 2008 to 2018. There are little upticks here an
 yearly.totals.table
 ```
 
-### Percent change from 2008 to 2018
+### Percent Change from 2008 to 2018
 
 When observing the difference in total events in each category from 2008 to 2018, we can see that vehicle theft fell the greatest at 52%, followed by burglary at 51.4%, theft at 18.64 and violent crime at 11.52%
 
@@ -366,7 +377,7 @@ When observing the difference in total events in each category from 2008 to 2018
 percent.change.table
 ```
 
-### Summary of changes by year
+### Summary of Changes by Year
 Studying the changes by year shows that the mean value of each category is on the decline as we previously saw. Vehicle theft and burglary had the most significant average reduction 1025 and 864 yearly instances respectively. 
 
 ```{r echo=FALSE}
@@ -382,11 +393,30 @@ Since the raw numbers can be difficult to compare, lets look at the data as perc
 yearly.change.pct.table
 ```
 
-### Category correlation
+### Category Correlation
 
 Looking at the correlation between each of these categories with a correlation matrix, we can see that each of them is positively correlated. Violent crime has the lowest overall correlation with all of the other categories, while motor vehicle theft had the highest. The two with the highest correlation was vehicle theft and burglary at 0.77.
 
 ```{r echo=FALSE}
-# Plot the correlations
+# Plot the correlation matrix
 corrplot(cor.matrix, method = 'number', type = 'lower', order = 'hclust')
 ```
+
+### Scatter Correlation
+
+Plotting the correlation between motor vehicle thefts and total burglaries we can see that the two attributes share a positive correlation as previously shown in the matrix.
+
+```{r echo=FALSE}
+# plot scatter correlation 
+scatter.corr
+```
+
+### Conclusion
+From the analysis I performed, there are positive correlations between each of the categories of crime. Since the correlations are positive, it indicates that as one crime level rises, so too do the others. The largest correlation was between motor vehicle theft and total burglary at 0.77 and the least was violent crime and theft at 0.45. Violent crime had the overall lowest correlation with any of the other categories ranging from 0.45 to 0.54. 
+
+All of the categories displayed a negative trend in total occurrences from 2008 to 2018. Vehicle theft fell 52%, burglary 51.4%, theft by 18.64% and violent crime by 11.52%. When observing these changes by year, we can see that violent crime decreased by a mean value of 10.07% and a median of 0.23%, burglary by a mean of 15.14% and median of 5.02%, thefts by a mean of 10.65% and median of 2.57% and vehicle theft by a mean of 14.83% and median of 9.55% year over year.
+
+<br>
+<br>
+<br>
+<br>
